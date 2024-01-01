@@ -1,0 +1,131 @@
+info:
+  description: Universal connect project institution list and analytics service (first draft)
+  title: ucp-analytics
+  version: 1.0.0
+openapi: 3.0.0
+components:
+  schemas:
+    analytics_pageview:
+      title: analytics_pageview
+      description: a page view event
+      type: object
+      properties:
+        data_source:
+          type: string
+        session_id: 
+          type: string
+        created_at:
+          type: string
+          format: datetime
+        app_version:
+          type: string
+        name:
+          type: string
+        host:
+          type: string
+        # metadata: null
+        #   type: string
+        # path: '/connect/agg/search',
+        #   type: string
+        # user_agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
+        #   type: string
+
+    analytics_event:
+      title: analytics_event
+      description: An action event
+      type: object
+      properties:
+        action: 
+          type: string
+        app_version: 
+          type: string
+        created_at:
+          type: string
+          format: date
+        #metadata: null,
+        #user_agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
+        version:
+          type: number
+        #category: 'Connect agg',
+        #label: 'MX Connect Start',
+        name: 
+          type: string
+        #path: '/connect/agg',
+        data_source:
+          type: string
+        session_id:
+          type: string
+        host:
+          type: string
+
+    analytics_session: 
+      title: analytics_session
+      description: start an analytics_session
+      properties:
+        product_name:
+          type: string
+        product_version:
+          type: string
+        browser_name:
+          type: string
+        browser_version:
+          type: string
+        is_first_visit:
+          type: boolean
+
+paths:
+  #/api/:component/analytics_session:
+  #/api/:component/analytics_pageview:
+  /api/:component/analytics_event:
+    post:
+      parameters:
+        - name: component
+          in: path
+          description: The name for identifying the component emitting the event
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/analytics_event'
+      description: |2-
+        Post an analytics_event of the specific component
+      responses:
+        "200":
+          description: Ok
+  /{institution}/metrics/{component}/{start}/{end} :
+    get:
+      parameters:
+        - name: institution
+          in: path
+          description: The name for institution to get data for
+          required: true
+          schema:
+            type: string
+        - name: component
+          in: path
+          description: The name for identifying the component of the source data
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: path
+          description: time range start not implemented, ignored
+          required: true
+          schema:
+            type: string
+            format: datetime
+        - name: end
+          in: path
+          description: time range start not implemented, ignored
+          required: true
+          schema:
+            type: string
+            format: datetime
+      description: |2-
+        Retrieve an agregated metrics for specific `institution`
+      responses:
+        "200":
+          description: the metrics data

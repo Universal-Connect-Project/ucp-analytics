@@ -1,0 +1,7 @@
+#.dockerignore 
+node_modules/
+dist/
+*-lock.yaml
+*-lock.json
+test.js
+.env
