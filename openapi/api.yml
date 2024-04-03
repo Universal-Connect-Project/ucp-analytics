@@ -3,6 +3,8 @@ info:
   title: ucp-analytics
   version: 1.0.0
 openapi: 3.0.0
+servers:
+  - url: https://analytics.universalconnectproject.org/
 components:
   schemas:
     analytics_pageview:
