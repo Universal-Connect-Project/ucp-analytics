@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
     "dev": "npx nodemon index.js"
   },
   "author": "",
@@ -20,6 +22,7 @@
     "lynx": "^0.2.0"
   },
   "devDependencies": {
+    "cypress": "^13.7.3",
     "nodemon": "^3.0.2"
   }
 }
