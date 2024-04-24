@@ -2,7 +2,7 @@ const logger = require('./infra/logger');
 const http = require('./infra/http');
 const config = require('./config')
 const { randomUUID } = require('crypto')
-const {parse_session, is_valid_session} = require('./dataProcessors/uvcs');
+const {parse_session, is_valid_session, is_start_session, getTags} = require('./dataProcessors/uvcs');
 const { uvcs, defaultPeriod } = require('./dataProcessors/graphite')
 const s3 = require('./utils/s3');
 const statsd = require('./utils/statsd');
@@ -58,12 +58,20 @@ module.exports = function (app){
           return;
         case 'analytics_event':
         case 'analytics_pageview':
-          const {session_id = 'no_session'} = req.body[type];
+          const session = req.body[type];
+          const {session_id = 'no_session'} = session;
           const session_prefix = `${s3Prefix}${component}/${getDateSectionOfPath(new Date())}/${user.id}/${session_id}/${type}`
           const s3_key = `${session_prefix}/${new Date().toISOString()}.json`
-          logger.debug(`Saving ${type} to s3, action: ${req.body[type].action}`, s3_key)
-          await s3Client.PutObject(s3_key, JSON.stringify(req.body[type]))
-          if(is_valid_session(type, req.body[type])){
+          logger.debug(`Saving ${type} to s3, action: ${session.action}`, s3_key)
+          await s3Client.PutObject(s3_key, JSON.stringify(session))
+          if(is_start_session(type, session)){
+            let tags = {
+              client_id: user.id,
+              ...getTags(session)
+            }
+            statsd.increment('uvcs.connection.start', tags)
+          }
+          if(is_valid_session(type, session)){
             let list = await s3Client.List(session_prefix);
             let events = await Promise.all(list.map(item => s3Client.GetObject(item.Key, true)))
             let ret = parse_session(events);
