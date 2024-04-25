@@ -19,8 +19,8 @@ jobs:
 
       - name: Install all dependencies
         run: |
-          npm ci
+          cd ./application && npm ci
 
       - name: Run Jest Tests
         run: |
-          npx jest --all --ci
+          cd ./application && npx jest --all --ci
