@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-docker build ./application -t ucp_analytics
+docker build ./src -t ucp_analytics
