@@ -13,11 +13,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
-      - run: cd ./application && npm ci
+      - run: npm ci
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
           start: npm run dev
           wait-on: "http://localhost:8081/ping"
-          working-directory: application
